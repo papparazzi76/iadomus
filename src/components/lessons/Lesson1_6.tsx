@@ -1,6 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FlaskConical, Bot } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FlaskConical, Bot, CheckCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+interface LessonProps {
+  onComplete: () => void;
+  isCompleted: boolean;
+}
 
 const toolsWithAI = [
     { name: "Canva", aiFeature: "Magic Write (texto), Imagen IA", capability: "Generar textos, diseños e imágenes en segundos" },
@@ -9,17 +15,24 @@ const toolsWithAI = [
     { name: "Zoom / Meet", aiFeature: "Fireflies, notas automáticas", capability: "Resúmenes de reuniones con IA" },
 ];
 
-export const Lesson1_6 = () => (
+export const Lesson1_6 = ({ onComplete, isCompleted }: LessonProps) => (
     <div className="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-3">
-                    <Bot className="h-6 w-6 text-primary" />
-                    Lección 1.6 – ¿Qué diferencia hay entre una IA y una herramienta con IA?
-                </CardTitle>
-                <CardDescription className="mt-2">
-                    Distinguir entre lo que es realmente una inteligencia artificial y lo que es una herramienta que la usa por dentro.
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle className="text-2xl flex items-center gap-3">
+                            <Bot className="h-6 w-6 text-primary" />
+                            Lección 1.6 – ¿Qué diferencia hay entre una IA y una herramienta con IA?
+                        </CardTitle>
+                        <CardDescription className="mt-2">
+                            Distinguir entre lo que es realmente una inteligencia artificial y lo que es una herramienta que la usa por dentro.
+                        </CardDescription>
+                    </div>
+                    <Button variant={isCompleted ? "default" : "outline"} onClick={onComplete}>
+                        {isCompleted ? <><CheckCircle className="mr-2 h-4 w-4" />Completada</> : "Marcar como completada"}
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="prose prose-sm max-w-none dark:prose-invert">
