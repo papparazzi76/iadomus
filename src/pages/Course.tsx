@@ -23,7 +23,7 @@ import {
   X,
   MessageSquare,
   Sparkles,
-  Lock, // Import Lock icon
+  Lock,
 } from "lucide-react";
 
 // Importa todas tus lecciones y el examen
@@ -56,7 +56,6 @@ const Course = () => {
 
   useEffect(() => {
     // En una app real, aquí cargarías el progreso del usuario desde una base de datos.
-    // Para este ejemplo, empezamos sin lecciones completadas.
   }, []);
 
   if (!user) {
@@ -67,11 +66,10 @@ const Course = () => {
   const handleCompleteLesson = (lessonId: string) => {
     setCompletedLessons((prev) => {
       if (prev.includes(lessonId)) {
-        return prev; // Ya está completada, no hacer nada
+        return prev;
       }
       const newCompleted = [...prev, lessonId];
       
-      // Avanzar automáticamente a la siguiente lección si no es la última
       const currentIndex = lessons.findIndex(l => l.id === lessonId);
       if (currentIndex < lessons.length - 1) {
         setActiveLesson(lessons[currentIndex + 1].id);
@@ -86,7 +84,6 @@ const Course = () => {
   const ActiveLessonComponent = lessons.find(l => l.id === activeLesson)?.component;
 
   const allLessonsCompleted = completedLessons.length === lessons.filter(l => !l.isQuiz).length;
-
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -183,7 +180,6 @@ const Course = () => {
           <div className="lg:col-span-3 space-y-6">
             {ActiveLessonComponent && <ActiveLessonComponent onComplete={() => handleCompleteLesson(activeLesson)} isCompleted={completedLessons.includes(activeLesson)} />}
             
-            {/* Mensaje de finalización del módulo */}
             {allLessonsCompleted && activeLesson !== '1.7' && (
               <Card className="bg-gradient-primary text-white border-0 mt-8">
                 <CardHeader>
@@ -245,3 +241,7 @@ const Course = () => {
         </div>
       )}
     </div>
+  );
+};
+
+export default Course;
