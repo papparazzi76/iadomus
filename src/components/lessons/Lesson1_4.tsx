@@ -1,7 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FlaskConical, Brain } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FlaskConical, Brain, CheckCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+interface LessonProps {
+  onComplete: () => void;
+  isCompleted: boolean;
+}
 
 const models = [
   { name: "GPT-3.5", usedIn: "ChatGPT Free", special: "Rápido, gratuito, bueno para empezar" },
@@ -18,17 +24,24 @@ const usageGuide = [
     { question: "¿Quieres probar IA en tu PC sin internet?", answer: "Mistral o LLaMA en LM Studio" },
 ]
 
-export const Lesson1_4 = () => (
+export const Lesson1_4 = ({ onComplete, isCompleted }: LessonProps) => (
   <div className="space-y-6">
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-3">
-          <Brain className="h-6 w-6 text-primary" />
-          Lección 1.4 – ¿Qué es un modelo de IA (sin enrollarse)?
-        </CardTitle>
-        <CardDescription className="mt-2">
-          Entender qué es un modelo de IA, por qué hay tantos nombres raros (GPT-4, Claude 3, Mistral…) y cómo saber cuál elegir, sin entrar en líos técnicos.
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl flex items-center gap-3">
+              <Brain className="h-6 w-6 text-primary" />
+              Lección 1.4 – ¿Qué es un modelo de IA (sin enrollarse)?
+            </CardTitle>
+            <CardDescription className="mt-2">
+              Entender qué es un modelo de IA, por qué hay tantos nombres raros (GPT-4, Claude 3, Mistral…) y cómo saber cuál elegir, sin entrar en líos técnicos.
+            </CardDescription>
+          </div>
+          <Button variant={isCompleted ? "default" : "outline"} onClick={onComplete}>
+            {isCompleted ? <><CheckCircle className="mr-2 h-4 w-4" />Completada</> : "Marcar como completada"}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="prose prose-sm max-w-none dark:prose-invert">
