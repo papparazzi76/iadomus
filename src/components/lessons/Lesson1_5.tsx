@@ -1,17 +1,30 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lightbulb, FlaskConical, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Lightbulb, FlaskConical, MessageSquare, CheckCircle } from "lucide-react";
 
-export const Lesson1_5 = () => (
+interface LessonProps {
+  onComplete: () => void;
+  isCompleted: boolean;
+}
+
+export const Lesson1_5 = ({ onComplete, isCompleted }: LessonProps) => (
     <div className="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-3">
-                    <MessageSquare className="h-6 w-6 text-primary" />
-                    Lección 1.5 – ¿Qué es un prompt y por qué importa tanto?
-                </CardTitle>
-                <CardDescription className="mt-2">
-                    Comprender qué es un “prompt” y aprender a escribir mejores instrucciones para obtener mejores resultados.
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle className="text-2xl flex items-center gap-3">
+                            <MessageSquare className="h-6 w-6 text-primary" />
+                            Lección 1.5 – ¿Qué es un prompt y por qué importa tanto?
+                        </CardTitle>
+                        <CardDescription className="mt-2">
+                            Comprender qué es un “prompt” y aprender a escribir mejores instrucciones para obtener mejores resultados.
+                        </CardDescription>
+                    </div>
+                    <Button variant={isCompleted ? "default" : "outline"} onClick={onComplete}>
+                        {isCompleted ? <><CheckCircle className="mr-2 h-4 w-4" />Completada</> : "Marcar como completada"}
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="prose prose-sm max-w-none dark:prose-invert">
