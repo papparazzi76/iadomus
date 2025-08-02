@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, Trophy, Zap, Brain, Target, Rocket, Users } from "lucide-react";
+import { CheckCircle, Clock, Trophy, Zap, Brain, Target, Rocket, Users, Lock } from "lucide-react"; // Import Lock icon
 import { Link } from "react-router-dom";
 
 const modules = [
@@ -13,7 +13,7 @@ const modules = [
     duration: "45 min",
     lessons: 6,
     difficulty: "Principiante",
-    status: "available",
+    status: "completed", // Changed to completed for demonstration
     color: "from-ai-purple to-primary"
   },
   {
@@ -74,6 +74,9 @@ const modules = [
 ];
 
 const CourseStructure = () => {
+  const completedModules = modules.filter(m => m.status === 'completed').length;
+  const progressPercentage = (completedModules / modules.length) * 100;
+  
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
@@ -98,9 +101,9 @@ const CourseStructure = () => {
             <div className="text-2xl font-bold text-primary">Progreso Global</div>
             <div className="text-sm text-muted-foreground">Completa todos los módulos</div>
           </div>
-          <Progress value={16.7} className="mb-4" />
+          <Progress value={progressPercentage} className="mb-4" />
           <div className="text-sm text-muted-foreground">
-            1 de 6 módulos completados
+            {completedModules} de {modules.length} módulos completados
           </div>
         </div>
       </div>
@@ -112,82 +115,78 @@ const CourseStructure = () => {
           const isLocked = module.status === "locked";
           const isCompleted = module.status === "completed";
           
-          return (
-            <Link to={`/course/${module.id}`} key={module.id}>
-              <Card
-                className={`relative p-6 border-border/50 hover:border-primary/50 transition-all duration-300 group cursor-pointer h-full
-                  ${isLocked ? 'opacity-60' : 'hover:scale-[1.02]'}
-                  ${isCompleted ? 'bg-gradient-to-br from-ai-success/10 to-ai-success/5' : ''}
-                `}
-              >
-                {/* Lock Overlay */}
-                {isLocked && (
-                  <div className="absolute inset-0 bg-card/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-muted-foreground">
-                        Desbloquea completando
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        módulo anterior
-                      </div>
+          const CardContent = () => (
+            <Card
+              className={`relative p-6 border-border/50 transition-all duration-300 group h-full
+                ${isLocked ? 'opacity-60 cursor-not-allowed' : 'hover:border-primary/50 hover:scale-[1.02] cursor-pointer'}
+                ${isCompleted ? 'bg-gradient-to-br from-ai-success/10 to-ai-success/5' : ''}
+              `}
+            >
+              {isLocked && (
+                <div className="absolute inset-0 bg-card/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <Lock className="w-6 h-6 mx-auto mb-2 text-muted-foreground"/>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      Completa el módulo anterior
                     </div>
                   </div>
-                )}
-                
-                {/* Module Number */}
-                <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gradient-accent flex items-center justify-center text-accent-foreground font-bold text-sm">
-                  {module.id}
+                </div>
+              )}
+              
+              <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gradient-accent flex items-center justify-center text-accent-foreground font-bold text-sm">
+                {module.id}
+              </div>
+              
+              <div className="absolute top-4 right-4">
+                {isCompleted && <CheckCircle className="w-6 h-6 text-ai-success" />}
+              </div>
+              
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} p-4 mb-6 group-hover:scale-110 transition-transform`}>
+                <Icon className="w-full h-full text-white" />
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                    {module.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {module.description}
+                  </p>
                 </div>
                 
-                {/* Status Icon */}
-                <div className="absolute top-4 right-4">
-                  {isCompleted && <CheckCircle className="w-6 h-6 text-ai-success" />}
-                </div>
-                
-                {/* Icon with gradient background */}
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} p-4 mb-6 group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-full h-full text-white" />
-                </div>
-                
-                {/* Content */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                      {module.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {module.description}
-                    </p>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <Badge variant="secondary" className="bg-muted/50">
+                      {module.difficulty}
+                    </Badge>
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Clock className="w-3 h-3" />
+                      {module.duration}
+                    </div>
                   </div>
                   
-                  {/* Meta Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs">
-                      <Badge variant="secondary" className="bg-muted/50">
-                        {module.difficulty}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        {module.duration}
-                      </div>
-                    </div>
-                    
-                    <div className="text-xs text-muted-foreground">
-                      {module.lessons} lecciones interactivas
-                    </div>
-                    
-                    {!isLocked && (
-                      <div className="pt-2">
-                        <Progress 
-                          value={module.status === "completed" ? 100 : (module.id === 1 ? 100 : 0)} 
-                          className="h-2" 
-                        />
-                      </div>
-                    )}
+                  <div className="text-xs text-muted-foreground">
+                    {module.lessons} lecciones interactivas
                   </div>
+                  
+                  {!isLocked && (
+                    <div className="pt-2">
+                      <Progress 
+                        value={module.status === "completed" ? 100 : (module.status === "available" ? 0 : 0)} 
+                        className="h-2" 
+                      />
+                    </div>
+                  )}
                 </div>
-              </Card>
-            </Link>
+              </div>
+            </Card>
+          );
+          
+          return isLocked ? (
+            <div key={module.id}><CardContent /></div>
+          ) : (
+            <Link to={`/course/${module.id}`} key={module.id}><CardContent /></Link>
           );
         })}
       </div>
