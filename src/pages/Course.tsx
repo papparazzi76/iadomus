@@ -22,7 +22,8 @@ import {
   Bot,
   X,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Lock, // Import Lock icon
 } from "lucide-react";
 
 // Importa todas tus lecciones y el examen
@@ -39,7 +40,6 @@ const Course = () => {
   const navigate = useNavigate();
   const { moduleId } = useParams();
   
-  // Define las lecciones de forma modular
   const lessons = [
       { id: "1.1", title: "¿Qué es la IA?", icon: Target, component: Lesson1_1 },
       { id: "1.2", title: "Clasificación de herramientas", icon: Wrench, component: Lesson1_2 },
@@ -55,11 +55,8 @@ const Course = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
-    // En una app real, aquí cargarías el progreso del usuario
-    // Por ahora, simulamos que la primera lección está completada
-    if (completedLessons.length === 0) {
-      setCompletedLessons(["1.1"]);
-    }
+    // En una app real, aquí cargarías el progreso del usuario desde una base de datos.
+    // Para este ejemplo, empezamos sin lecciones completadas.
   }, []);
 
   if (!user) {
@@ -67,14 +64,23 @@ const Course = () => {
     return null;
   }
 
-  const toggleLessonComplete = (lessonId: string) => {
-    setCompletedLessons((prev) =>
-      prev.includes(lessonId)
-        ? prev.filter((id) => id !== lessonId)
-        : [...prev, lessonId]
-    );
+  const handleCompleteLesson = (lessonId: string) => {
+    setCompletedLessons((prev) => {
+      if (prev.includes(lessonId)) {
+        return prev; // Ya está completada, no hacer nada
+      }
+      const newCompleted = [...prev, lessonId];
+      
+      // Avanzar automáticamente a la siguiente lección si no es la última
+      const currentIndex = lessons.findIndex(l => l.id === lessonId);
+      if (currentIndex < lessons.length - 1) {
+        setActiveLesson(lessons[currentIndex + 1].id);
+      }
+      
+      return newCompleted;
+    });
   };
-
+  
   const progressPercentage = (completedLessons.length / (lessons.length - 1)) * 100;
 
   const ActiveLessonComponent = lessons.find(l => l.id === activeLesson)?.component;
@@ -134,21 +140,33 @@ const Course = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {lessons.map((lesson) => {
+                {lessons.map((lesson, index) => {
                   const Icon = lesson.icon;
                   const isCompleted = completedLessons.includes(lesson.id);
                   const isActive = activeLesson === lesson.id;
+                  
+                  let isLocked = false;
+                  if (index > 0) {
+                      const prevLesson = lessons[index-1];
+                      if (!completedLessons.includes(prevLesson.id)) {
+                          isLocked = true;
+                      }
+                  }
+
+                  if (lesson.isQuiz && !allLessonsCompleted) {
+                      isLocked = true;
+                  }
 
                   return (
                     <Button
                       key={lesson.id}
                       variant={isActive ? "default" : "ghost"}
-                      className={`w-full justify-start gap-3 ${
-                        isCompleted && !lesson.isQuiz ? "bg-primary/10" : ""
-                      }`}
+                      className={`w-full justify-start gap-3`}
                       onClick={() => setActiveLesson(lesson.id)}
+                      disabled={isLocked}
                     >
-                      {isCompleted && !lesson.isQuiz ? (
+                      {isLocked ? <Lock className="h-4 w-4 text-muted-foreground" /> :
+                       isCompleted && !lesson.isQuiz ? (
                         <CheckCircle className="h-4 w-4 text-primary" />
                       ) : (
                         <Icon className="h-4 w-4" />
@@ -163,7 +181,7 @@ const Course = () => {
 
           {/* Contenido principal */}
           <div className="lg:col-span-3 space-y-6">
-            {ActiveLessonComponent && <ActiveLessonComponent onComplete={() => toggleLessonComplete(activeLesson)} isCompleted={completedLessons.includes(activeLesson)} />}
+            {ActiveLessonComponent && <ActiveLessonComponent onComplete={() => handleCompleteLesson(activeLesson)} isCompleted={completedLessons.includes(activeLesson)} />}
             
             {/* Mensaje de finalización del módulo */}
             {allLessonsCompleted && activeLesson !== '1.7' && (
@@ -227,7 +245,3 @@ const Course = () => {
         </div>
       )}
     </div>
-  );
-};
-
-export default Course;
